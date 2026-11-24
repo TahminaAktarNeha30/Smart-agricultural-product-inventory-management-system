@@ -1,0 +1,309 @@
+{
+  "items": [
+    {
+      "id": "ITEM-101",
+      "name": "Fresh Tomatoes",
+      "category": "Vegetables",
+      "type": "Finished Product",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 50,
+      "rotationRule": "FEFO",
+      "sellingPrice": 45,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-102",
+      "name": "Cow Milk",
+      "category": "Dairy",
+      "type": "Farming Input",
+      "unit": "litres",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 30,
+      "rotationRule": "FEFO",
+      "sellingPrice": null,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-103",
+      "name": "Poultry Starter Feed",
+      "category": "Animal Feed",
+      "type": "Finished Product",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 100,
+      "rotationRule": "FIFO",
+      "sellingPrice": 120,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-104",
+      "name": "Organic Fertilizer NPK",
+      "category": "Fertilizers",
+      "type": "Finished Product",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 40,
+      "rotationRule": "FIFO",
+      "sellingPrice": 233,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-611667",
+      "name": "Rice",
+      "category": "Feed",
+      "type": "Farming Input",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 100,
+      "rotationRule": "FIFO",
+      "sellingPrice": null,
+      "isActive": true,
+      "createdAt": "2026-11-23T07:23:31.668Z"
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "WH-01",
+      "name": "Warehouse A",
+      "location": "North",
+      "storageType": "Cold Storage",
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "WH-02",
+      "name": "Warehouse B",
+      "location": "South",
+      "storageType": "Dry Storage",
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "SUP-01",
+      "name": "Green Agro Inputs Ltd.",
+      "phone": "01711223344",
+      "address": "Dhaka",
+      "suppliedItems": [
+        "Poultry Starter Feed"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "SUP-02",
+      "name": "Bengal Seed Solutions",
+      "phone": "01819876543",
+      "address": "Bogra",
+      "suppliedItems": [
+        "Seeds"
+      ],
+      "isActive": false,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "batches": [
+    {
+      "id": "T01",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-20",
+      "receivingDate": "2026-11-20",
+      "expiryDate": "2026-11-26",
+      "initialQuantity": 200,
+      "remainingQuantity": 200,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "T02",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-21",
+      "receivingDate": "2026-11-21",
+      "expiryDate": "2026-11-28",
+      "initialQuantity": 150,
+      "remainingQuantity": 150,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "M01",
+      "itemId": "ITEM-102",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-21",
+      "receivingDate": "2026-11-21",
+      "expiryDate": "2026-11-24",
+      "initialQuantity": 50,
+      "remainingQuantity": 50,
+      "unit": "litres",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FEED-A",
+      "itemId": "ITEM-103",
+      "warehouseId": "WH-02",
+      "sourceType": "Supplier Purchase",
+      "supplierId": "SUP-01",
+      "farmSourceDescription": null,
+      "harvestDate": null,
+      "receivingDate": "2026-11-18",
+      "expiryDate": null,
+      "initialQuantity": 100,
+      "remainingQuantity": 100,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FEED-B",
+      "itemId": "ITEM-103",
+      "warehouseId": "WH-02",
+      "sourceType": "Supplier Purchase",
+      "supplierId": "SUP-01",
+      "farmSourceDescription": null,
+      "harvestDate": null,
+      "receivingDate": "2026-11-18",
+      "expiryDate": null,
+      "initialQuantity": 40,
+      "remainingQuantity": 40,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FERT-OK",
+      "itemId": "ITEM-104",
+      "warehouseId": "WH-02",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-19",
+      "receivingDate": "2026-11-19",
+      "expiryDate": "2027-01-22",
+      "initialQuantity": 25,
+      "remainingQuantity": 25,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FERT-OLD",
+      "itemId": "ITEM-104",
+      "warehouseId": "WH-02",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-10-24",
+      "receivingDate": "2026-10-24",
+      "expiryDate": "2026-11-22",
+      "initialQuantity": 30,
+      "remainingQuantity": 0,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "R03",
+      "itemId": "ITEM-611667",
+      "warehouseId": "WH-02",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse",
+      "harvestDate": "20026-02-02",
+      "receivingDate": "2026-11-23",
+      "expiryDate": null,
+      "initialQuantity": 100,
+      "remainingQuantity": 100,
+      "unit": "kg",
+      "createdAt": "2026-11-23T07:28:32.919Z"
+    }
+  ],
+  "orders": [],
+  "transactions": [
+    {
+      "id": "TX-INIT-01",
+      "type": "Stock Receipt",
+      "batchId": "T01",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "quantity": 200,
+      "unit": "kg",
+      "officerName": "Warehouse Supervisor",
+      "timestamp": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "TX-WST-fedd4c43-d8c7-404d-aa59-d372ff024075",
+      "type": "Stock Wastage",
+      "batchId": "FERT-OLD",
+      "itemId": "ITEM-104",
+      "warehouseId": "WH-02",
+      "quantity": 30,
+      "unit": "kg",
+      "officerName": "Md. Tariqul Islam",
+      "timestamp": "2026-11-22T19:57:47.536Z",
+      "details": {
+        "wastageDate": "2026-11-22",
+        "reason": "spoilage",
+        "isExpiredBatch": true
+      }
+    },
+    {
+      "id": "TX-REC-578f8469-3295-4138-a127-a6ea6a369018",
+      "type": "Stock Receipt",
+      "batchId": "R03",
+      "itemId": "ITEM-611667",
+      "warehouseId": "WH-02",
+      "quantity": 100,
+      "unit": "kg",
+      "officerName": "Md. Tariqul Islam",
+      "timestamp": "2026-11-23T07:28:32.920Z",
+      "details": {
+        "sourceType": "Farm Production",
+        "supplierId": null,
+        "farmSourceDescription": "Greenhouse",
+        "receivingDate": "2026-11-23",
+        "expiryDate": null
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "USER-01",
+      "username": "manager",
+      "passwordHash": "1710570251347ace4ac1f705de600b62:e4ddbf5051754fa1784160492205c947d63f25c900efd09cf5f8cb63a641685b",
+      "fullName": "Rahim Uddin",
+      "role": "Farm Manager"
+    },
+    {
+      "id": "USER-02",
+      "username": "officer",
+      "passwordHash": "f33de91bf9e5739e3e6af957a83e7897:e7762311ebab23a80e2e942e50273602e308a427259a97adc95bfccca904a37e",
+      "fullName": "Md. Tariqul Islam",
+      "role": "Warehouse Officer"
+    },
+    {
+      "id": "USER-03",
+      "username": "distributor",
+      "passwordHash": "4d136dbccf686bc4ebf659358d8b5a58:1fd7ee003e4806329e2d88cffcf17b1874046fd60cb3504b040a809b4f987185",
+      "fullName": "Dhaka Fresh Retailers",
+      "role": "Distributor"
+    }
+  ]
+}

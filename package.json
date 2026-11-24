@@ -1,0 +1,39 @@
+{
+  "name": "smart-agricultural-inventory",
+  "version": "1.1.0",
+  "description": "Smart Agricultural Product Inventory Management System (layered architecture, Node.js + Express)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --coverage",
+    "lint": "eslint .",
+    "docs": "jsdoc -c jsdoc.json",
+    "demo-data": "node scripts/resetDemoData.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "config/**/*.js"
+    ],
+    "coverageDirectory": "coverage"
+  },
+  "keywords": [
+    "agriculture",
+    "inventory",
+    "fifo",
+    "fefo",
+    "warehouse",
+    "express"
+  ],
+  "author": "Tahmina Aktar Neha, Maksuratun Rashmi, Maimuna Akter Tripty, Mehnaj Akter",
+  "license": "ISC"
+}
