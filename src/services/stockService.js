@@ -6,8 +6,7 @@ const itemRepository = require('../dal/itemRepository');
 const warehouseRepository = require('../dal/warehouseRepository');
 const supplierRepository = require('../dal/supplierRepository');
 const batchRepository = require('../dal/batchRepository');
-const transactionRepository = require('../dal/transactionRepository');
-const { ITEM_TYPES, ROTATION_RULES, WASTAGE_REASONS, getExpiryStatus, getBangladeshDateString } = require('../../config/constants');
+const { ITEM_TYPES, ROTATION_RULES, WASTAGE_REASONS, getExpiryStatus } = require('../../config/constants');
 
 class StockService {
   /**

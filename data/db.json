@@ -220,5 +220,27 @@
       "timestamp": "2026-01-01T00:00:00.000Z"
     }
   ],
-  "users": []
+  "users": [
+    {
+      "id": "USER-01",
+      "username": "manager",
+      "passwordHash": "40300eb1dc1364d0593294ccb3095533:1b5f1328f64fec3cfff3469727a57f0ffe61bf04482deb057b4f0ebf0a171240",
+      "fullName": "Rahim Uddin",
+      "role": "Farm Manager"
+    },
+    {
+      "id": "USER-02",
+      "username": "officer",
+      "passwordHash": "e7233c1f16d4384849bb03235065ed98:6c587d0f4d9d8ff61d0991fa185823b0dac629a20eb0c926524fa359f538b95f",
+      "fullName": "Md. Tariqul Islam",
+      "role": "Warehouse Officer"
+    },
+    {
+      "id": "USER-03",
+      "username": "distributor",
+      "passwordHash": "b420f2d1e0eae3c924c2c104916a16e3:bedc47708d8e008fcd5c34dba05f422001d648f85435ed750a0f465adcda5445",
+      "fullName": "Dhaka Fresh Retailers",
+      "role": "Distributor"
+    }
+  ]
 }
