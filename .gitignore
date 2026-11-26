@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+docs/api/
+data/backups/*.json
+*.tmp
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,4 @@
+{
+  "source": { "include": ["src", "config"], "includePattern": ".+\\.js$" },
+  "opts": { "recurse": true, "destination": "docs/api" }
+}

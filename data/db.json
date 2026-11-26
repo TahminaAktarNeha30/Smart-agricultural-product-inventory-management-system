@@ -1,0 +1,224 @@
+{
+  "items": [
+    {
+      "id": "ITEM-101",
+      "name": "Fresh Tomatoes",
+      "category": "Vegetables",
+      "type": "Finished Product",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 50,
+      "rotationRule": "FEFO",
+      "sellingPrice": 45,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-102",
+      "name": "Cow Milk",
+      "category": "Dairy",
+      "type": "Finished Product",
+      "unit": "litres",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 30,
+      "rotationRule": "FEFO",
+      "sellingPrice": 60,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-103",
+      "name": "Poultry Starter Feed",
+      "category": "Animal Feed",
+      "type": "Farming Input",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 100,
+      "rotationRule": "FIFO",
+      "sellingPrice": null,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ITEM-104",
+      "name": "Organic Fertilizer NPK",
+      "category": "Fertilizers",
+      "type": "Farming Input",
+      "unit": "kg",
+      "storageRequirements": "Cool and dry",
+      "packagingDetails": "Bags",
+      "minStockLevel": 40,
+      "rotationRule": "FIFO",
+      "sellingPrice": null,
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "WH-01",
+      "name": "Warehouse A",
+      "location": "North",
+      "storageType": "Cold Storage",
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "WH-02",
+      "name": "Warehouse B",
+      "location": "South",
+      "storageType": "Dry Storage",
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "SUP-01",
+      "name": "Green Agro Inputs Ltd.",
+      "phone": "01711223344",
+      "address": "Dhaka",
+      "suppliedItems": [
+        "Poultry Starter Feed"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "SUP-02",
+      "name": "Bengal Seed Solutions",
+      "phone": "01819876543",
+      "address": "Bogra",
+      "suppliedItems": [
+        "Seeds"
+      ],
+      "isActive": false,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "batches": [
+    {
+      "id": "T01",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-23",
+      "receivingDate": "2026-11-23",
+      "expiryDate": "2026-11-29",
+      "initialQuantity": 200,
+      "remainingQuantity": 200,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "T02",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-24",
+      "receivingDate": "2026-11-24",
+      "expiryDate": "2026-12-01",
+      "initialQuantity": 150,
+      "remainingQuantity": 150,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "M01",
+      "itemId": "ITEM-102",
+      "warehouseId": "WH-01",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-24",
+      "receivingDate": "2026-11-24",
+      "expiryDate": "2026-11-27",
+      "initialQuantity": 50,
+      "remainingQuantity": 50,
+      "unit": "litres",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FEED-A",
+      "itemId": "ITEM-103",
+      "warehouseId": "WH-02",
+      "sourceType": "Supplier Purchase",
+      "supplierId": "SUP-01",
+      "farmSourceDescription": null,
+      "harvestDate": null,
+      "receivingDate": "2026-11-21",
+      "expiryDate": null,
+      "initialQuantity": 100,
+      "remainingQuantity": 100,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FEED-B",
+      "itemId": "ITEM-103",
+      "warehouseId": "WH-02",
+      "sourceType": "Supplier Purchase",
+      "supplierId": "SUP-01",
+      "farmSourceDescription": null,
+      "harvestDate": null,
+      "receivingDate": "2026-11-21",
+      "expiryDate": null,
+      "initialQuantity": 40,
+      "remainingQuantity": 40,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FERT-OK",
+      "itemId": "ITEM-104",
+      "warehouseId": "WH-02",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-11-22",
+      "receivingDate": "2026-11-22",
+      "expiryDate": "2027-01-25",
+      "initialQuantity": 25,
+      "remainingQuantity": 25,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "FERT-OLD",
+      "itemId": "ITEM-104",
+      "warehouseId": "WH-02",
+      "sourceType": "Farm Production",
+      "supplierId": null,
+      "farmSourceDescription": "Greenhouse plot",
+      "harvestDate": "2026-10-27",
+      "receivingDate": "2026-10-27",
+      "expiryDate": "2026-11-25",
+      "initialQuantity": 30,
+      "remainingQuantity": 30,
+      "unit": "kg",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "orders": [],
+  "transactions": [
+    {
+      "id": "TX-INIT-01",
+      "type": "Stock Receipt",
+      "batchId": "T01",
+      "itemId": "ITEM-101",
+      "warehouseId": "WH-01",
+      "quantity": 200,
+      "unit": "kg",
+      "officerName": "Warehouse Supervisor",
+      "timestamp": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "users": []
+}

@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Agricultural Product Inventory Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= LOGIN SCREEN (shown until the user logs in) ================= -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">🌾</div>
+      <h1 class="login-title">Smart Agricultural Product<br>Inventory Management System</h1>
+      <p class="login-subtitle">Please log in to continue</p>
+
+      <div id="loginError" class="login-error" style="display:none;"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" class="form-control" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="loginPassword" class="form-control" autocomplete="current-password" required>
+            <button type="button" id="togglePasswordBtn" class="btn-toggle-password" aria-label="Toggle password visibility">Show</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary login-btn">Login</button>
+      </form>
+
+      <div class="login-demo">
+        <strong>Demo accounts</strong> (click to fill)
+        <ul>
+          <li><a href="#" class="demo-fill" data-user="manager" data-pass="manager123">Farm Manager</a> &mdash; manager / manager123</li>
+          <li><a href="#" class="demo-fill" data-user="officer" data-pass="officer123">Warehouse Officer</a> &mdash; officer / officer123</li>
+          <li><a href="#" class="demo-fill" data-user="distributor" data-pass="distributor123">Distributor</a> &mdash; distributor / distributor123</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN APPLICATION (hidden until login succeeds) ================= -->
+  <div id="appShell" style="display:none;">
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo">🌾</div>
+      <div>
+        <div class="brand-title">Smart Agricultural Product Inventory Management System</div>
+
+      </div>
+    </div>
+
+    <!-- Logged-in user and Logout button -->
+    <div class="user-role-section">
+      <div class="quick-role-switcher" title="Quickly switch demo role">
+        <span class="switcher-label">Switch:</span>
+        <button type="button" class="btn-role-pill" onclick="App.quickSwitchRole('manager')">👨‍🌾 Manager</button>
+        <button type="button" class="btn-role-pill" onclick="App.quickSwitchRole('officer')">🏢 Officer</button>
+        <button type="button" class="btn-role-pill" onclick="App.quickSwitchRole('distributor')">🛒 Distributor</button>
+      </div>
+      <div class="user-info">
+        <span id="userFullName" class="user-name"></span>
+        <span id="userRoleBadge" class="user-role-badge"></span>
+      </div>
+      <button type="button" id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs (Filtered dynamically by Role) -->
+  <nav class="app-nav">
+    <button class="nav-tab" data-target="dashboard-sec" data-roles="Farm Manager,Warehouse Officer,Distributor" title="Overview of your inventory at a glance">
+      🏠 Dashboard
+    </button>
+    <button class="nav-tab" data-target="item-catalog-sec" data-roles="Farm Manager,Warehouse Officer" title="Add, edit, and manage all agricultural product records">
+      📋 Item Catalog
+    </button>
+    <button class="nav-tab" data-target="warehouse-supplier-sec" data-roles="Farm Manager" title="Manage storage facilities and supplier contacts">
+      🏭 Warehouses & Suppliers
+    </button>
+    <button class="nav-tab" data-target="stock-view-sec" data-roles="Farm Manager,Warehouse Officer" title="View batch quantities, expiry dates, and stock status">
+      📦 Stock Levels
+    </button>
+    <button class="nav-tab" data-target="receive-stock-sec" data-roles="Warehouse Officer" title="Register new stock from farm harvest or supplier delivery">
+      📥 Receive Stock
+    </button>
+    <button class="nav-tab" data-target="dispatch-sec" data-roles="Warehouse Officer" title="Approve, reject, or dispatch distributor orders using FIFO/FEFO">
+      🚚 Orders & Dispatch
+    </button>
+    <button class="nav-tab" data-target="alerts-sec" data-roles="Farm Manager,Warehouse Officer" title="Low-stock warnings and batch expiry notifications">
+      🔔 Alerts <span id="alertsTabBadge" class="tab-badge" style="display:none;">0</span>
+    </button>
+
+    <!-- Distributor Only Views (US-7A, US-7E) -->
+    <button class="nav-tab" data-target="distributor-catalog-sec" data-roles="Distributor" title="Browse finished products available for distribution">
+      🛒 Products
+    </button>
+    <button class="nav-tab" data-target="track-orders-sec" data-roles="Distributor" title="Check the real-time status of your order">
+      🔍 Track Order
+    </button>
+  </nav>
+
+  <!-- Main Application Body -->
+  <main class="app-main">
+
+    <!-- Global Alert Banner for Feedback (NFR-06, NFR-08) -->
+    <div id="globalAlertBanner" class="alert-banner"></div>
+
+    <!-- ========================================== -->
+    <!-- DASHBOARD: Role-specific Welcome & Summary -->
+    <!-- ========================================== -->
+    <section id="dashboard-sec" class="page-section active">
+      <div class="dashboard-welcome">
+        <div class="welcome-text">
+          <h2 class="section-title">Welcome back, <span id="dashWelcomeName">User</span>! 👋</h2>
+          <p class="section-subtitle" id="dashRoleDescription">Here's your inventory overview</p>
+        </div>
+        <div class="dash-date" id="dashDate"></div>
+      </div>
+
+      <!-- Dashboard Stats -->
+      <div class="grid-4" id="dashStatsGrid" style="margin-bottom: 24px;">
+        <!-- Dynamically populated by DashboardModule -->
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-title">⚡ Quick Actions</div>
+        <div class="quick-actions" id="dashQuickActions">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- How it works guide -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-title">📖 How This System Works</div>
+        <div id="dashGuide" class="guide-steps">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: Item Catalog (Feature 1: US-01) -->
+    <!-- ========================================== -->
+    <section id="item-catalog-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Item Catalog Management</h2>
+          <p class="section-subtitle">Maintain centralized records of agricultural inputs and finished products</p>
+        </div>
+        <div>
+          <button id="addItemBtn" class="btn btn-primary" onclick="CatalogModule.openAddItemModal()">+ Add New Item</button>
+        </div>
+      </div>
+
+      <div class="info-callout">
+        <span>💡</span>
+        <div>
+          <strong>Catalog Guide:</strong> 
+          <em>Farming Inputs</em> (seeds, fertilizer, animal feed) are used internally on the farm. 
+          <em>Finished Products</em> (harvested crops, dairy, eggs) are sold to distributors with custom selling prices. 
+          <strong>FIFO</strong> dispatches oldest stock first; <strong>FEFO</strong> automatically prioritizes lots nearest expiration date.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <input type="text" id="catalogSearchInput" class="form-control" style="max-width:280px;" placeholder="🔍 Search catalog by name or code..." onkeyup="CatalogModule.filterItems(this.value)">
+            <select id="catalogCategoryFilter" class="form-control" style="max-width:180px;" onchange="CatalogModule.filterByCategory(this.value)">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:12px; color:var(--text-muted);" id="catalogCountNotice">Showing all items</div>
+            <button type="button" class="btn-export" onclick="CatalogModule.exportCSV()" title="Download catalog as CSV spreadsheet">📥 Export CSV</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item & Code</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Current Stock</th>
+                <th>Unit</th>
+                <th>Min Stock Level</th>
+                <th>Rotation Rule</th>
+                <th>Selling Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="itemTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- SECTION 2: Warehouses & Suppliers (Feature 2: US-02)   -->
+    <!-- ====================================================== -->
+    <section id="warehouse-supplier-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Warehouses & Suppliers</h2>
+          <p class="section-subtitle">Manage physical storage facilities and trusted supplier records</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="CatalogModule.openAddWarehouseModal()">+ Add Warehouse</button>
+          <button class="btn btn-secondary" onclick="CatalogModule.openAddSupplierModal()">+ Add Supplier</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 12px;">Storage Facilities</h3>
+          <div id="warehouseListContainer"></div>
+        </div>
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 12px;">Registered Suppliers</h3>
+          <div id="supplierListContainer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- SECTION 3: Stock Levels & Batches (Feature 4: US-04)   -->
+    <!-- ====================================================== -->
+    <section id="stock-view-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Stock Levels & Batch Overview</h2>
+          <p class="section-subtitle">Track remaining quantities, expiry states, and storage locations</p>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="grid-3" style="margin-bottom: 20px;">
+        <div class="stat-card">
+          <div class="stat-icon green">📦</div>
+          <div>
+            <div class="stat-val" id="statTotalUsable">0</div>
+            <div class="stat-label">Total Usable Stock</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">⚠️</div>
+          <div>
+            <div class="stat-val" id="statTotalExpired">0</div>
+            <div class="stat-label">Expired Stock (Non-dispatchable)</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">🏷️</div>
+          <div>
+            <div class="stat-val" id="statTotalBatches">0</div>
+            <div class="stat-label">Total Active Batches</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <!-- Filter Bar & Search (US-04) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <label style="font-size: 13px; font-weight: 600;">Warehouse:</label>
+              <select id="filterWarehouse" class="form-control" style="width: 200px;" onchange="InventoryModule.loadStockOverview()">
+                <option value="">-- All Warehouses --</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <label style="font-size: 13px; font-weight: 600;">Search:</label>
+              <input type="text" id="filterItemSearch" class="form-control" placeholder="Item name or ID..." style="width: 180px;" oninput="InventoryModule.renderStockOverview()">
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <div class="legend-bar">
+              <span class="legend-item"><span class="dot green"></span> Active Usable</span>
+              <span class="legend-item"><span class="dot yellow"></span> Expiring Soon (≤3 Days)</span>
+              <span class="legend-item"><span class="dot red"></span> Expired (Blocked)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="checkbox" id="filterShowEmpty" onchange="InventoryModule.loadStockOverview()">
+              <label for="filterShowEmpty" style="font-size: 13px; cursor: pointer;">Show depleted (0)</label>
+            </div>
+            <button type="button" class="btn-export" onclick="InventoryModule.exportCSV()" title="Export stock overview as CSV spreadsheet">📥 Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Batch ID</th>
+                <th>Item Name & Category</th>
+                <th>Warehouse</th>
+                <th>Current / Remaining Stock</th>
+                <th>Initial Quantity</th>
+                <th>Receipt Date</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="stockTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- SECTION 4: Stock Receiving (Feature 3: US-03)          -->
+    <!-- ====================================================== -->
+    <section id="receive-stock-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Stock Receiving</h2>
+          <p class="section-subtitle">Record incoming stock batches from farm harvest or supplier purchases</p>
+        </div>
+      </div>
+
+      <div class="info-callout" style="max-width: 800px; margin: 0 auto 20px auto;">
+        <span>💡</span>
+        <div>
+          <strong>Receiving Guide:</strong> Assign each lot a distinct Batch ID. For items with a <strong>FEFO</strong> rotation rule, an expiration date is mandatory to safeguard quality.
+        </div>
+      </div>
+
+      <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <form id="stockReceiptForm" onsubmit="InventoryModule.submitStockReceipt(event)">
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Item</label>
+              <select id="recItemSelect" class="form-control" required onchange="InventoryModule.onItemSelectChange(this)">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Target Warehouse</label>
+              <select id="recWarehouseSelect" class="form-control" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Batch Identification Number</label>
+              <input type="text" id="recBatchId" class="form-control" placeholder="e.g. T03, BATCH-2026-01" required>
+              <div class="form-hint">Must be unique per lot.</div>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Quantity Received</label>
+              <div class="input-with-unit">
+                <input type="number" step="0.01" min="0.01" id="recQuantity" class="form-control" placeholder="0.00" required>
+                <span id="recUnitAddon" class="unit-addon">units</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Stock Source Type</label>
+              <select id="recSourceType" class="form-control" required onchange="InventoryModule.onSourceTypeChange(this)">
+                <option value="Farm Production">Farm Production / Harvest</option>
+                <option value="Supplier Purchase">Supplier Purchase</option>
+              </select>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Receiving Date</label>
+              <input type="date" id="recReceivingDate" class="form-control" required>
+            </div>
+          </div>
+
+          <!-- Conditional Supplier Purchase Fields (US-03) -->
+          <div id="supplierSourceGroup" class="form-group" style="display:none;">
+            <label class="form-label required">Select Active Supplier</label>
+            <select id="recSupplierSelect" class="form-control">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <!-- Conditional Farm Harvest Fields (US-03) -->
+          <div id="farmSourceGroup" class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Farm Source Description</label>
+              <input type="text" id="recFarmDesc" class="form-control" placeholder="e.g. Greenhouse Plot 4, Dairy Shed B">
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Harvest / Production Date</label>
+              <input type="date" id="recHarvestDate" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="recExpiryLabel" class="form-label">Expiration Date</label>
+            <input type="date" id="recExpiryDate" class="form-control">
+            <div class="form-hint">Mandatory for FEFO and perishable goods. Must be on or after the receiving date.</div>
+          </div>
+
+          <div style="margin-top: 20px; text-align: right;">
+            <button type="submit" class="btn btn-primary">Confirm Stock Receipt & Register Batch</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- SECTION 5: Orders & FIFO/FEFO Dispatch (Features 6 & 7)        -->
+    <!-- ============================================================== -->
+    <section id="dispatch-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Distributor Orders & Dispatch Management</h2>
+          <p class="section-subtitle">Review orders, inspect FIFO/FEFO batch suggestions, and confirm complete dispatch</p>
+        </div>
+      </div>
+
+      <div class="info-callout">
+        <span>💡</span>
+        <div>
+          <strong>Dispatch Workflow:</strong> Review incoming orders below. When you click <strong>Prepare Dispatch</strong>, the system automatically analyzes batch arrival and expiration dates across warehouses to allocate the optimal batches using <strong>FIFO or FEFO</strong>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+          <button type="button" class="btn-export" onclick="DispatchModule.exportCSV()" title="Export orders history as CSV">📥 Export CSV</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Distributor</th>
+                <th>Ordered Items</th>
+                <th>Total Value</th>
+                <th>Status</th>
+                <th>Audit Details</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- SECTION 6: Alerts Page (Feature 8: US-8A, US-8B)       -->
+    <!-- ====================================================== -->
+    <section id="alerts-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Inventory Alerts & Risk Monitoring</h2>
+          <p class="section-subtitle" id="alertsDateNotice">Checked in Bangladesh Standard Time (UTC+6)</p>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 20px;">
+        <div class="stat-card">
+          <div class="stat-icon red">📉</div>
+          <div>
+            <div class="stat-val" id="statLowStockCount">0</div>
+            <div class="stat-label">Low Stock Alerts</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⏳</div>
+          <div>
+            <div class="stat-val" id="statExpiringSoonCount">0</div>
+            <div class="stat-label">Expiring Soon (≤ 3 Days)</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">🚫</div>
+          <div>
+            <div class="stat-val" id="statExpiredCount">0</div>
+            <div class="stat-label">Expired Batches</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚠️ Low-Stock Alerts (Usable Stock < Minimum Stock Level)</div>
+        <div id="lowStockAlertsList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏳ Batches Expiring Soon (Within 3 Calendar Days)</div>
+        <div id="expiringSoonAlertsList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚫 Expired Batches (Excluded from Normal Usage and Dispatch)</div>
+        <div id="expiredAlertsList"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SECTION 7: Distributor Available Products (US-7A, US-7B)           -->
+    <!-- ================================================================= -->
+    <section id="distributor-catalog-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Available Finished Products</h2>
+          <p class="section-subtitle">Select fresh farm produce at current fixed prices and submit your order</p>
+        </div>
+      </div>
+
+      <div class="info-callout">
+        <span>🛒</span>
+        <div>
+          <strong>How to Order:</strong> 
+          1. Browse the fresh products below. &nbsp;|&nbsp; 
+          2. Enter quantities and click <em>Add to Order</em>. &nbsp;|&nbsp; 
+          3. Enter your business details on the right and submit your order. Save your Order Number!
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Products Grid -->
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 14px;">Available Product Catalog</h3>
+          <div id="distributorProductList" class="grid-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Order Placement Form (US-7B) -->
+        <div>
+          <div class="card">
+            <h3 class="card-title">Place Distributor Order</h3>
+            <div id="cartSummaryContainer" style="margin-bottom: 14px;">
+              <!-- Selected order lines -->
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; padding: 10px 0; border-top: 2px solid var(--border-color);">
+              <span style="font-weight: 700;">Order Total:</span>
+              <span id="cartTotalAmount" style="font-size: 18px; font-weight: 800; color: var(--primary-color);">BDT 0.00</span>
+            </div>
+
+            <form id="distributorOrderForm" onsubmit="DistributorModule.submitOrder(event)">
+              <div class="form-group">
+                <label class="form-label required">Distributor / Business Name</label>
+                <input type="text" id="distName" class="form-control" placeholder="e.g. Green Valley Superstore" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label required">Contact Phone Number</label>
+                <input type="tel" id="distPhone" class="form-control" placeholder="e.g. 01712345678" required>
+                <div class="form-hint">Used together with your Order Number to track or cancel orders.</div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
+                Confirm & Submit Order
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SECTION 8: Distributor Order Tracking (US-7E, US-7F)               -->
+    <!-- ================================================================= -->
+    <section id="track-orders-sec" class="page-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Track Order Status</h2>
+          <p class="section-subtitle">Check real-time order verification, approval, or dispatch status</p>
+        </div>
+      </div>
+
+      <div class="info-callout" style="max-width: 600px; margin: 0 auto 20px auto;">
+        <span>🔍</span>
+        <div>
+          Enter the <strong>Order Number</strong> and the exact <strong>Contact Phone Number</strong> provided when placing the order to check live tracking or cancel before fulfillment.
+        </div>
+      </div>
+
+      <div class="card" style="max-width: 600px; margin: 0 auto 20px auto;">
+        <form onsubmit="DistributorModule.searchOrderTracking(event)">
+          <div class="form-group">
+            <label class="form-label required">Order Number</label>
+            <input type="text" id="trackOrderNumber" class="form-control" placeholder="e.g. ORD-123456-789" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Matching Phone Number</label>
+            <input type="tel" id="trackPhone" class="form-control" placeholder="Phone number entered during order" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Search Order</button>
+        </form>
+      </div>
+
+      <!-- Tracking Results Box -->
+      <div id="trackingResultBox" class="card" style="max-width: 700px; margin: 0 auto; display: none;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+          <div>
+            <h3 style="margin:0;">Order: <span id="trackResOrderNum"></span></h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:4px 0;" id="trackResDistributor"></p>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">Placed: <span id="trackResPlacedAt"></span></p>
+          </div>
+          <div id="trackResStatus"></div>
+        </div>
+
+        <!-- Order Progress Stepper -->
+        <div id="trackResStepperContainer"></div>
+
+        <div id="trackResRejectionRow" style="display:none; background-color: var(--danger-bg); padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;">
+          <strong>Rejection Reason:</strong> <span id="trackResRejectionReason"></span>
+        </div>
+
+        <div class="table-responsive" style="margin-bottom: 14px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="trackResLinesBody"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>Grand Total: <span id="trackResTotal" style="color:var(--primary-color);"></span></strong>
+          </div>
+          <div>
+            <!-- US-7F: Cancel before dispatch -->
+            <button id="btnCancelOrder" class="btn btn-danger btn-sm" style="display:none;">Cancel Order</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================== -->
+  <!-- MODALS (Item, Warehouse, Supplier, Usage, Wastage, etc) -->
+  <!-- ====================================================== -->
+
+  <!-- Add/Edit Item Modal -->
+  <div id="itemModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="itemModalTitle">Add New Item</h3>
+        <button class="modal-close" onclick="CatalogModule.closeItemModal()">✕</button>
+      </div>
+      <form id="itemForm" onsubmit="CatalogModule.saveItem(event)">
+        <div class="modal-body">
+          <input type="hidden" id="itemIdField">
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Item Name</label>
+              <input type="text" id="itemName" class="form-control" placeholder="e.g. Fresh Tomatoes" required>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Category</label>
+              <input type="text" id="itemCategory" class="form-control" placeholder="e.g. Vegetables, Dairy, Feed" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Type</label>
+              <select id="itemType" class="form-control" required onchange="CatalogModule.onTypeChange(this)">
+                <option value="Farming Input">Farming Input</option>
+                <option value="Finished Product">Finished Product</option>
+              </select>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Stock Unit</label>
+              <input type="text" id="itemUnit" class="form-control" placeholder="e.g. kg, litres, bags" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Storage Requirements</label>
+              <input type="text" id="itemStorage" class="form-control" placeholder="e.g. Cold room 2-4°C" required>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Packaging Details</label>
+              <input type="text" id="itemPackaging" class="form-control" placeholder="e.g. 20kg Crates, 5L cans" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Minimum Stock Level</label>
+              <input type="number" min="0" id="itemMinStock" class="form-control" required>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Stock Rotation Rule</label>
+              <select id="itemRotationRule" class="form-control" required>
+                <option value="FIFO">FIFO (First-In, First-Out)</option>
+                <option value="FEFO">FEFO (First-Expired, First-Out)</option>
+              </select>
+            </div>
+          </div>
+          <div id="sellingPriceGroup" class="form-group" style="display:none;">
+            <label class="form-label required">Selling Price (BDT)</label>
+            <input type="number" step="0.01" min="0.01" id="itemSellingPrice" class="form-control" placeholder="0.00">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="CatalogModule.closeItemModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Warehouse Modal -->
+  <div id="warehouseModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Warehouse Record</h3>
+        <button class="modal-close" onclick="CatalogModule.closeWarehouseModal()">✕</button>
+      </div>
+      <form id="warehouseForm" onsubmit="CatalogModule.saveWarehouse(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label required">Warehouse Name</label>
+            <input type="text" id="whName" class="form-control" placeholder="e.g. Warehouse C (Dry Grain)" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Location Details</label>
+            <input type="text" id="whLocation" class="form-control" placeholder="e.g. West Wing, Sector 3" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Storage Type</label>
+            <select id="whStorageType" class="form-control" required>
+              <option value="Cold Storage">Cold Storage</option>
+              <option value="Dry Storage">Dry Storage</option>
+              <option value="Ambient Ventilated">Ambient Ventilated</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="CatalogModule.closeWarehouseModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Warehouse</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Supplier Modal -->
+  <div id="supplierModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Supplier Record</h3>
+        <button class="modal-close" onclick="CatalogModule.closeSupplierModal()">✕</button>
+      </div>
+      <form id="supplierForm" onsubmit="CatalogModule.saveSupplier(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label required">Supplier Name</label>
+            <input type="text" id="supName" class="form-control" placeholder="e.g. Padma Seeds & Fertilizers" required>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Phone Number</label>
+              <input type="tel" id="supPhone" class="form-control" placeholder="e.g. +8801700000000" required>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Address</label>
+              <input type="text" id="supAddress" class="form-control" placeholder="e.g. Farmgate, Dhaka" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Supplied Items (Comma-separated)</label>
+            <input type="text" id="supItems" class="form-control" placeholder="e.g. Urea, Hybrid Rice Seeds, Poultry Feed">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="CatalogModule.closeSupplierModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Record Usage Modal (US-05A) -->
+  <div id="usageModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Farming Input Usage</h3>
+        <button class="modal-close" onclick="InventoryModule.closeUsageModal()">✕</button>
+      </div>
+      <form id="usageForm" onsubmit="InventoryModule.submitUsage(event)">
+        <div class="modal-body">
+          <input type="hidden" id="usageBatchId">
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label">Item Name</label>
+              <input type="text" id="usageItemName" class="form-control" readonly disabled>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label">Available Batch Balance</label>
+              <input type="text" id="usageAvailable" class="form-control" readonly disabled>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Quantity to Issue</label>
+              <div class="input-with-unit">
+                <input type="number" step="0.01" min="0.01" id="usageQuantity" class="form-control" placeholder="0.00" required>
+                <span id="usageUnitAddon" class="unit-addon">units</span>
+              </div>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Usage Date</label>
+              <input type="date" id="usageDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Usage Purpose / Field Destination</label>
+            <input type="text" id="usagePurpose" class="form-control" placeholder="e.g. Daily poultry feeding shed 3, field fertilization" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="InventoryModule.closeUsageModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Usage & Deduct</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Record Wastage Modal (US-05B) -->
+  <div id="wastageModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Stock Wastage / Write-Off</h3>
+        <button class="modal-close" onclick="InventoryModule.closeWastageModal()">✕</button>
+      </div>
+      <form id="wastageForm" onsubmit="InventoryModule.submitWastage(event)">
+        <div class="modal-body">
+          <input type="hidden" id="wastageBatchId">
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label">Item Name</label>
+              <input type="text" id="wastageItemName" class="form-control" readonly disabled>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label">Available Balance</label>
+              <input type="text" id="wastageAvailable" class="form-control" readonly disabled>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col form-group">
+              <label class="form-label required">Wastage Quantity</label>
+              <div class="input-with-unit">
+                <input type="number" step="0.01" min="0.01" id="wastageQuantity" class="form-control" placeholder="0.00" required>
+                <span id="wastageUnitAddon" class="unit-addon">units</span>
+              </div>
+            </div>
+            <div class="form-col form-group">
+              <label class="form-label required">Wastage Date</label>
+              <input type="date" id="wastageDate" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Wastage Reason (Mandatory)</label>
+            <select id="wastageReason" class="form-control" required>
+              <option value="spoilage">Spoilage</option>
+              <option value="expiry">Expiry</option>
+              <option value="damage">Damage</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="InventoryModule.closeWastageModal()">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm Wastage Deduction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reject Order Modal (US-7C) -->
+  <div id="rejectModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Reject Distributor Order</h3>
+        <button class="modal-close" onclick="DispatchModule.closeRejectModal()">✕</button>
+      </div>
+      <form id="rejectForm" onsubmit="DispatchModule.submitRejectOrder(event)">
+        <div class="modal-body">
+          <input type="hidden" id="rejectOrderId">
+          <div class="form-group">
+            <label class="form-label required">Rejection Reason</label>
+            <textarea id="rejectReason" class="form-control" rows="3" placeholder="Provide clear reason to distributor..." required></textarea>
+            <div class="form-hint">This reason will be visible to the distributor when tracking the order.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="DispatchModule.closeRejectModal()">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dispatch Allocation Preview Modal (Features 6 & 7) -->
+  <div id="dispatchModal" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Prepare Order Dispatch & Batch Allocations</h3>
+        <button class="modal-close" onclick="DispatchModule.closeDispatchModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background-color: var(--info-bg); padding: 12px; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--border-color);">
+          <div><strong>Order:</strong> <span id="dispOrderNumber"></span></div>
+          <div><strong>Distributor:</strong> <span id="dispDistributorInfo"></span></div>
+        </div>
+
+        <div id="dispatchShortageWarning" class="alert-banner error" style="margin-bottom: 14px; display: none;"></div>
+
+        <div id="dispatchLinesContainer">
+          <!-- FIFO / FEFO Allocation breakdown -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="DispatchModule.closeDispatchModal()">Cancel</button>
+        <button id="btnConfirmDispatch" type="button" class="btn btn-primary" onclick="DispatchModule.confirmDispatch()">
+          Confirm & Execute Complete Dispatch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- end appShell -->
+
+  <!-- Application Scripts -->
+  <script src="js/dashboard.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/dispatch.js"></script>
+  <script src="js/distributor.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
