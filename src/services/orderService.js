@@ -5,6 +5,7 @@ const db = require('../dal/database');
 const itemRepository = require('../dal/itemRepository');
 const batchRepository = require('../dal/batchRepository');
 const orderRepository = require('../dal/orderRepository');
+const warehouseRepository = require('../dal/warehouseRepository');
 const suggestionService = require('./suggestionService');
 const { ITEM_TYPES, ORDER_STATUS, getExpiryStatus } = require('../../config/constants');
 
