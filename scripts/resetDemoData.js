@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { buildBaseline } = require('../data/baseline');
+const { buildBaseline } = require('../tests/helpers/testDb');
 
 const dbFile = path.join(__dirname, '../data/db.json');
 fs.writeFileSync(dbFile, JSON.stringify(buildBaseline(), null, 2), 'utf8');
