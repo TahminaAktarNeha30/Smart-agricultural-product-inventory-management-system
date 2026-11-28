@@ -5,7 +5,7 @@ A web application to manage farm stock: items, warehouses, suppliers, batches, s
 ## Team Members:
 
 1. Tahmina Aktar Neha (TN) - 2220592
-2. Maksuratun Rashmi (MR) - 2220871
+2. Maksuratun Rashmi (MR) - 2220871 ([@reshmii2002](https://github.com/reshmii2002))
 3. Maimuna Akter Tripty (MT) - 2221582
 4. Mehnaj Akter (MA) - 2222624
 
@@ -173,9 +173,9 @@ agri-product/
 ├── .github/workflows/        GitHub Actions CI pipeline configuration
 ├── config/                   Roles, constants, BD date and expiry helpers
 ├── data/                     db.json database + automatic backups
-├── docs/                     Generated API documentation directory (JSDoc output in docs/api)
+├── docs/                     Documentation files and design specifications
 ├── public/                   1. Presentation Layer (SPA: HTML, CSS, client JS)
-├── resources/                Architecture documentation, testing reports, and team work split
+├── resources/                Sprint planning, meeting minutes, architecture, reports
 ├── scripts/                  Database reset and helper scripts
 ├── src/                      Backend implementation
 │   ├── controllers/          2. Request Handling layer
@@ -201,4 +201,4 @@ agri-product/
 | **Member 3** (Maimuna Akter Tripty) | **F5 Usage & Wastage** + **F6 FIFO/FEFO Suggestions** | `feature/member3-usage-fifo` | US-05A, 05B, 06 |
 | **Member 4** (Mehnaj Akter) | **F7 Orders & Dispatch** + **F8 Low Stock & Expiry Alerts** | `feature/member4-orders-alerts` | US-7A to 7F, 8A, 8B |
 
-*(For detailed method-level assignments and exam presentation guidelines, see [TEAM_WORK_SPLIT.md](resources/TEAM_WORK_SPLIT.md).)*
+*(For detailed method-level assignments and exam presentation guidelines, see [TEAM_WORK_SPLIT.md](file:///c:/Users/21%20Technology/Downloads/agri-product-main/resources/TEAM_WORK_SPLIT.md).)*
