@@ -55,7 +55,7 @@ class SupplierService {
    * @throws {Error} If name, phone or address is empty.
    */
   addSupplier(data) {
-    const { name, phone, address, suppliedItems } = data;
+    const { name, phone, address, suppliedItems } = data || {};
 
     if (!name || !name.trim()) throw new Error('Supplier name is required.');
     if (!phone || !phone.trim()) throw new Error('Supplier phone number is required.');
